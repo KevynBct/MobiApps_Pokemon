@@ -2,51 +2,25 @@ package adykb.android.mobiapps
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
-import android.widget.EditText
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import me.sargunvohra.lib.pokekotlin.model.NamedApiResource
 
+
 class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInteractionListener {
     var currentPage = 1
-    lateinit  var pageCounter : EditText
+    lateinit  var pageSpinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        pageCounter = findViewById(R.id.editPageCounter)
-        pageCounter.setText(currentPage.toString())
+        initPageSpinner()
 
-        pageCounter.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                Toast.makeText(applicationContext, "1", Toast.LENGTH_SHORT).show()
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                Toast.makeText(applicationContext, "2", Toast.LENGTH_SHORT).show()
-            }
-        })
-
-        pageCounter.setOnFocusChangeListener { v, hasFocus ->
-            run {
-                if (!hasFocus) {
-                    Toast.makeText(applicationContext, "3", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(applicationContext, "4", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        var pokeListFragment = PokeListFragment()
-
-        this.supportFragmentManager.beginTransaction().replace(R.id.fragmentLayout, pokeListFragment).commit()
-
+        this.supportFragmentManager.beginTransaction().replace(R.id.fragmentLayout, PokeListFragment()).commit()
     }
 
     override fun onListFragmentInteraction(item: NamedApiResource) {
@@ -57,18 +31,42 @@ class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInterac
     fun previousPage(v : View) {
         if(currentPage > 1) {
             currentPage--
+            pageSpinner.setSelection(currentPage-1)
             this.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentLayout, PokeListFragment.newInstance(currentPage)).commit()
-            pageCounter.setText(currentPage.toString())
         }
     }
 
     fun nextPage(v : View) {
         if(currentPage < 49) {
             currentPage++
+            pageSpinner.setSelection(currentPage-1)
             this.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentLayout, PokeListFragment.newInstance(currentPage)).commit()
-            pageCounter.setText(currentPage.toString())
+        }
+    }
+
+    fun initPageSpinner() {
+        pageSpinner = findViewById(R.id.page_spinner)
+
+        val totalPages = ArrayList<Int>()
+        for (i in 1..49){
+            totalPages.add(i)
+        }
+
+        val dataAdapter = ArrayAdapter<Int>(this, android.R.layout.simple_spinner_item, totalPages)
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        pageSpinner.adapter = dataAdapter
+
+        pageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                currentPage = pageSpinner.selectedItem as Int
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentLayout, PokeListFragment.newInstance(currentPage)).commit()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
 }
