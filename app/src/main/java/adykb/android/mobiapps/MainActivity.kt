@@ -1,5 +1,6 @@
 package adykb.android.mobiapps
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -24,8 +25,10 @@ class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInterac
     }
 
     override fun onListFragmentInteraction(item: NamedApiResource) {
-        Toast.makeText(applicationContext, item.name, Toast.LENGTH_SHORT).show()
-        print(item)
+        var intent = Intent(this, PokeDetailActivity::class.java)
+        intent.putExtra(PokeDetailActivity.ARG_ID, item.id)
+        intent.putExtra(PokeDetailActivity.ARG_NAME, item.name)
+        startActivity(intent)
     }
 
     fun previousPage(v : View) {
