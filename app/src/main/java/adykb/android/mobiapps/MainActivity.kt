@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInterac
         isLoaded()
     }
 
-
     fun previousPage(v : View) {
         if(currentPage > 1) {
             isLoading(false)
@@ -69,6 +68,7 @@ class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInterac
         }
     }
 
+    // Cache le contenu le temps du chargement
     private fun isLoading(firstInit: Boolean) {
         findViewById<ProgressBar>(R.id.loaderList).visibility = View.VISIBLE
 
@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInterac
         }
     }
 
+    // Affiche le contenu après le chargement
     private fun isLoaded() {
         findViewById<ProgressBar>(R.id.loaderList).visibility = View.INVISIBLE
 

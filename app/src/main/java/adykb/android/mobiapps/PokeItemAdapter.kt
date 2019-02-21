@@ -32,6 +32,7 @@ class PokeItemAdapter(
         return ViewHolder(view)
     }
 
+    // Initialise les valeurs de éléments de la liste
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
         holder.mIdView.text = "N°${item.id}"

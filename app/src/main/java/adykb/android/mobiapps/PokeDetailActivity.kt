@@ -102,6 +102,7 @@ class PokeDetailActivity : AppCompatActivity(){
         weightContent.text = "${pokemonWeight / 10F}kg"
     }
 
+    // Affiche la liste des techniques
     fun movesButton(v: View){
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.moves_list))
@@ -137,6 +138,7 @@ class PokeDetailActivity : AppCompatActivity(){
         return  super.onOptionsItemSelected(item)
     }
 
+    // Cache le contenu le temps du chargement
     private fun isLoading() {
         findViewById<ProgressBar>(R.id.progressBar).visibility = View.VISIBLE
 
@@ -151,6 +153,7 @@ class PokeDetailActivity : AppCompatActivity(){
         movesButton.visibility = View.INVISIBLE
     }
 
+    // Affiche le contenu après le chargement
     private fun isLoaded() {
         findViewById<ProgressBar>(R.id.progressBar).visibility = View.INVISIBLE
 
