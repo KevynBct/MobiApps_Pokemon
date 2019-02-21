@@ -91,7 +91,7 @@ class PokeDetailActivity : AppCompatActivity(){
         for (type in pokemon.types){
             types += type.type.name.capitalize()+"\n"
         }
-        typesContent.text = types
+        typesContent.text = types.trim()
 
 
 
