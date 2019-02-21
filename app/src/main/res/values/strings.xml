@@ -1,7 +1,11 @@
 <resources>
-    <string name="app_name">MobiApps</string>
+    <string name="app_name">Pokemon</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="moves_list">Moves list</string>
+    <string name="types">Type(s)</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+    <string name="moves">Moves</string>
+    <string name="show_moves">Show moves</string>
 </resources>
