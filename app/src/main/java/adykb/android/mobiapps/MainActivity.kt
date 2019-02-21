@@ -3,24 +3,24 @@ package adykb.android.mobiapps
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
-import android.widget.Toast
+import android.widget.*
 import me.sargunvohra.lib.pokekotlin.model.NamedApiResource
 
 
 class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInteractionListener {
     var currentPage = 1
-    lateinit  var pageSpinner: Spinner
+    lateinit var navBar : LinearLayout
+    lateinit var pageSpinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        navBar = findViewById(R.id.navBar)
+
         initPageSpinner()
 
+        isLoading(true)
         this.supportFragmentManager.beginTransaction().replace(R.id.fragmentLayout, PokeListFragment()).commit()
     }
 
@@ -31,8 +31,14 @@ class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInterac
         startActivity(intent)
     }
 
+    override fun listLoaded() {
+        isLoaded()
+    }
+
+
     fun previousPage(v : View) {
         if(currentPage > 1) {
+            isLoading(false)
             currentPage--
             pageSpinner.setSelection(currentPage-1)
             this.supportFragmentManager.beginTransaction()
@@ -42,6 +48,7 @@ class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInterac
 
     fun nextPage(v : View) {
         if(currentPage < 49) {
+            isLoading(false)
             currentPage++
             pageSpinner.setSelection(currentPage-1)
             this.supportFragmentManager.beginTransaction()
@@ -49,7 +56,7 @@ class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInterac
         }
     }
 
-    fun initPageSpinner() {
+    private fun initPageSpinner() {
         pageSpinner = findViewById(R.id.page_spinner)
 
         val totalPages = ArrayList<Int>()
@@ -71,5 +78,19 @@ class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInterac
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
+    }
+
+    private fun isLoading(firstInit: Boolean) {
+        findViewById<ProgressBar>(R.id.loaderList).visibility = View.VISIBLE
+
+        if(firstInit){
+            navBar.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun isLoaded() {
+        findViewById<ProgressBar>(R.id.loaderList).visibility = View.INVISIBLE
+
+        navBar.visibility = View.VISIBLE
     }
 }

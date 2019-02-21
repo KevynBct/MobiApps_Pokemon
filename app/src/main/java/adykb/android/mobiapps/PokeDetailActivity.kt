@@ -12,7 +12,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
 import android.content.Intent
-import android.util.Log
 
 
 class PokeDetailActivity : AppCompatActivity(){
