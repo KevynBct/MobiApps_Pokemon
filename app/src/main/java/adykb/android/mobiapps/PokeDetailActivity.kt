@@ -3,14 +3,17 @@ package adykb.android.mobiapps
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
 import com.squareup.picasso.Picasso
 import me.sargunvohra.lib.pokekotlin.client.PokeApiClient
 import me.sargunvohra.lib.pokekotlin.model.Pokemon
 import android.support.v7.app.AlertDialog
-import android.widget.Button
+import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.*
+import android.content.Intent
+
+
 
 
 class PokeDetailActivity : AppCompatActivity(){
@@ -29,6 +32,10 @@ class PokeDetailActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pokedetail)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         imagePokemon = findViewById(R.id.image_pokemon)
         typesTitle = findViewById(R.id.types_title)
@@ -106,12 +113,37 @@ class PokeDetailActivity : AppCompatActivity(){
 
     fun movesButton(v: View){
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Moves list")
+        builder.setTitle(getString(R.string.moves_list))
 
         builder.setItems(movesList.toTypedArray(), null)
 
         val dialog = builder.create()
         dialog.show()
+    }
+
+    // Ajout de la toolbar
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_detail, menu)
+        return true
+    }
+
+    // Action des boutons de la toolbar
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            android.R.id.home -> {
+                onBackPressed()
+                return true
+            }
+            R.id.share_button -> {
+                val sharingIntent = Intent(android.content.Intent.ACTION_SEND)
+                sharingIntent.type = "text/plain"
+                val shareBody = "#${pokemon.id} : ${pokemon.name.capitalize()}\n${pokemon.sprites.frontDefault}"
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody)
+                startActivity(Intent.createChooser(sharingIntent, "Share via"))
+                return true
+            }
+        }
+        return  super.onOptionsItemSelected(item)
     }
 
     companion object {
