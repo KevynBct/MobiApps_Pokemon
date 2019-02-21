@@ -39,6 +39,7 @@ class PokeListFragment : Fragment() {
 
                     activity?.runOnUiThread {
                         adapter = PokeItemAdapter(pokeList, listener)
+                        listener?.listLoaded()
                     }
                 }.start()
             }
@@ -61,11 +62,12 @@ class PokeListFragment : Fragment() {
     }
 
     interface OnListFragmentInteractionListener {
+        fun listLoaded()
         fun onListFragmentInteraction(item: NamedApiResource)
     }
 
     companion object {
-        const val ARG_PAGE_NUMBER = "page-number"
+        const val ARG_PAGE_NUMBER = "page_number"
 
         @JvmStatic
         fun newInstance(pageNumber: Int) =
