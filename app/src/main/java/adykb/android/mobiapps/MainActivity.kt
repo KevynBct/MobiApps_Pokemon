@@ -3,6 +3,7 @@ package adykb.android.mobiapps
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.view.View
 import android.widget.*
 import me.sargunvohra.lib.pokekotlin.model.NamedApiResource
@@ -10,18 +11,30 @@ import me.sargunvohra.lib.pokekotlin.model.NamedApiResource
 
 class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInteractionListener {
     var currentPage = 1
-    lateinit var navBar : LinearLayout
-    lateinit var pageSpinner: Spinner
+    lateinit var navBar : ConstraintLayout
+    lateinit var pageCounter: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         navBar = findViewById(R.id.navBar)
+        pageCounter = findViewById(R.id.page_counter)
 
-        initPageSpinner()
+        if(savedInstanceState !== null) {
+            isLoading(false)
+            currentPage = savedInstanceState.getInt(CURRENT_PAGE)
+            this.supportFragmentManager.beginTransaction().replace(R.id.fragmentLayout, PokeListFragment.newInstance(currentPage)).commit()
+        } else {
+            isLoading(true)
+            this.supportFragmentManager.beginTransaction().replace(R.id.fragmentLayout, PokeListFragment()).commit()
+        }
 
-        isLoading(true)
-        this.supportFragmentManager.beginTransaction().replace(R.id.fragmentLayout, PokeListFragment()).commit()
+        pageCounter.text = "${currentPage} / 49"
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        outState?.putInt(CURRENT_PAGE, currentPage)
+        super.onSaveInstanceState(outState)
     }
 
     override fun onListFragmentInteraction(item: NamedApiResource) {
@@ -40,7 +53,7 @@ class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInterac
         if(currentPage > 1) {
             isLoading(false)
             currentPage--
-            pageSpinner.setSelection(currentPage-1)
+            pageCounter.text = "${currentPage} / 49"
             this.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentLayout, PokeListFragment.newInstance(currentPage)).commit()
         }
@@ -50,33 +63,9 @@ class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInterac
         if(currentPage < 49) {
             isLoading(false)
             currentPage++
-            pageSpinner.setSelection(currentPage-1)
+            pageCounter.text = "${currentPage} / 49"
             this.supportFragmentManager.beginTransaction()
                 .replace(R.id.fragmentLayout, PokeListFragment.newInstance(currentPage)).commit()
-        }
-    }
-
-    private fun initPageSpinner() {
-        pageSpinner = findViewById(R.id.page_spinner)
-
-        val totalPages = ArrayList<Int>()
-        for (i in 1..49){
-            totalPages.add(i)
-        }
-
-        val dataAdapter = ArrayAdapter<Int>(this, android.R.layout.simple_spinner_item, totalPages)
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        pageSpinner.adapter = dataAdapter
-
-        pageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                currentPage = pageSpinner.selectedItem as Int
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentLayout, PokeListFragment.newInstance(currentPage)).commit()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
 
@@ -92,5 +81,9 @@ class MainActivity : AppCompatActivity(), PokeListFragment.OnListFragmentInterac
         findViewById<ProgressBar>(R.id.loaderList).visibility = View.INVISIBLE
 
         navBar.visibility = View.VISIBLE
+    }
+
+    companion object {
+        val CURRENT_PAGE = "current_page"
     }
 }
